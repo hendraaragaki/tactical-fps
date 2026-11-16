@@ -79,18 +79,60 @@ function buildGun(def, kind) {
     add(0.06, 0.11, 0.07, 0, -0.10, 0.10, dark, -0.2);
     add(0.012, 0.02, 0.012, 0, 0.065, -0.48, accent);
   } else {
-    // AK-47: dark receiver, wooden handguard and stock, curved magazine.
+    // AK-47, matched to Hendra's reference photo: warm reddish-brown worn
+    // varnished wood (buttstock, handguard, pistol grip), blackened steel
+    // receiver with smooth dust cover, long ribbed curved magazine, tall
+    // front sight post with protective ears, cleaning rod under the barrel,
+    // slanted muzzle nut. No orange accent — the realistic look must not break.
+    const redwood = new THREE.MeshStandardMaterial({ color: 0x8f4a24, roughness: 0.45, metalness: 0.05 });
+    const redwoodDark = new THREE.MeshStandardMaterial({ color: 0x7a3d1e, roughness: 0.5, metalness: 0.05 });
+    const blackSteel = new THREE.MeshStandardMaterial({ color: 0x1e1e22, roughness: 0.38, metalness: 0.65 });
+    // Receiver + smooth dust cover on top.
     add(0.09, 0.11, 0.40, 0, 0, -0.08, gunmetal);
-    add(0.04, 0.04, 0.32, 0, 0.025, -0.44, steel);
-    add(0.015, 0.06, 0.015, 0, 0.06, -0.58, gunmetal);
-    add(0.05, 0.05, 0.05, 0, 0.025, -0.60, dark);
-    add(0.09, 0.075, 0.20, 0, -0.005, -0.30, wood);
-    add(0.085, 0.10, 0.22, 0, -0.015, 0.28, wood);
-    add(0.06, 0.12, 0.09, 0, -0.10, -0.06, gunmetal, 0.12);
-    add(0.06, 0.12, 0.09, 0, -0.19, -0.02, gunmetal, 0.32);
-    add(0.065, 0.05, 0.095, 0, -0.255, 0.03, dark, 0.5);
-    add(0.06, 0.12, 0.07, 0, -0.10, 0.12, wood, -0.25);
-    add(0.09, 0.015, 0.12, 0, 0.06, -0.10, accent);
+    add(0.085, 0.025, 0.42, 0, 0.062, -0.08, steel);
+    // Rear sight block on the dust cover.
+    add(0.05, 0.03, 0.07, 0, 0.085, -0.24, dark);
+    // Barrel (round, steel) + gas tube above it + gas block.
+    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.32, 10), steel);
+    barrel.rotation.x = Math.PI / 2;
+    barrel.position.set(0, 0.025, -0.44);
+    group.add(barrel);
+    const gasTube = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.22, 8), blackSteel);
+    gasTube.rotation.x = Math.PI / 2;
+    gasTube.position.set(0, 0.052, -0.38);
+    group.add(gasTube);
+    add(0.05, 0.055, 0.06, 0, 0.05, -0.40, gunmetal);
+    // Cleaning rod under the barrel.
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.34, 8), dark);
+    rod.rotation.x = Math.PI / 2;
+    rod.position.set(0, -0.002, -0.42);
+    group.add(rod);
+    // Front sight: base + tall post + protective ears flanking it.
+    add(0.05, 0.05, 0.05, 0, 0.045, -0.58, blackSteel);
+    add(0.015, 0.085, 0.015, 0, 0.10, -0.58, blackSteel);
+    add(0.014, 0.06, 0.035, -0.03, 0.085, -0.58, blackSteel);
+    add(0.014, 0.06, 0.035, 0.03, 0.085, -0.58, blackSteel);
+    // Slanted muzzle nut.
+    add(0.045, 0.045, 0.05, 0, 0.025, -0.62, blackSteel, -0.35);
+    // Wooden handguard (red-brown varnish) with a darker seam underneath.
+    add(0.095, 0.09, 0.22, 0, -0.005, -0.30, redwood);
+    add(0.097, 0.012, 0.22, 0, -0.05, -0.30, redwoodDark);
+    // Buttstock (darker worn wood) + buttplate.
+    add(0.085, 0.10, 0.24, 0, -0.015, 0.28, redwoodDark);
+    add(0.088, 0.105, 0.015, 0, -0.015, 0.405, dark);
+    // Curved magazine: five segments for a pronounced smooth curve, black
+    // steel, widths alternating slightly to suggest the vertical ribs.
+    // Compressed vertically so the whole curve stays in frame.
+    add(0.06, 0.11, 0.085, 0, -0.095, -0.07, blackSteel, 0.05);
+    add(0.064, 0.11, 0.085, 0, -0.13, -0.055, blackSteel, 0.25);
+    add(0.06, 0.11, 0.085, 0, -0.165, -0.03, blackSteel, 0.45);
+    add(0.064, 0.11, 0.085, 0, -0.195, 0.0, blackSteel, 0.65);
+    add(0.06, 0.11, 0.085, 0, -0.22, 0.035, blackSteel, 0.85);
+    add(0.065, 0.03, 0.09, 0, -0.245, 0.055, dark, 0.95);
+    // Trigger guard below the receiver, between mag and grip.
+    add(0.015, 0.06, 0.09, 0, -0.085, 0.05, dark, 0.15);
+    // Wooden pistol grip.
+    add(0.06, 0.12, 0.07, 0, -0.10, 0.12, redwood, -0.25);
   }
   group.position.set(0.24, -0.2, -0.42);
   return group;
