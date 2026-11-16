@@ -10,7 +10,7 @@ Make the best three.js tactical FPS: a round-based, Counter-Strike-style game wi
 
 You are the attacker. Plant the bomb on site A or B, or eliminate all four defenders. First to 5 rounds takes the match (max 9).
 
-- **Gunplay** — 5 weapons (pistol, rifle, SMG, shotgun, DMR) with headshot bonuses, recoil and spread that punish firing while moving, crouching, acceleration-based movement, and collision with the map.
+- **Gunplay** — 5 real weapons (P250 pistol, AK-47 rifle, MP5 SMG, MAG-7 shotgun, AWP sniper) with headshot bonuses, recoil and spread that punish firing while moving, crouching, acceleration-based movement, and collision with the map.
 - **Tactics** — round economy (kill +$300, win +$3250, loss +$1900), a buy menu (B), three grenades (frag, smoke, flash), and four named bots (Rook, Vex, Hound, Mira) that hold sites, patrol routes, react to sight and sound, strafe while firing, rotate, and defuse.
 - **Map** — "Ember Yard", an original dusk freight yard: two bomb sites, a mid lane with doors, a connector, long lanes, crates, pillars, and a platform. Sand, rust, and ember palette with teal site B.
 - **Feel** — procedural WebAudio gunfire, footsteps, and round stingers; tracers, sparks, smoke that blocks line of sight, flash blindness, and a full HUD (health, ammo, timer, score, money, killfeed, plant bar).

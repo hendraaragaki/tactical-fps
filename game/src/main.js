@@ -615,7 +615,7 @@ function runShot(name) {
     weapons.buy('smoke');
     weapons.select('rifle');
     hud.setMoney(match.money);
-    hud.setAmmo(weapons.state.mag.rifle, weapons.state.reserve.rifle, 'VK-7 Rifle', weapons.state.grenades);
+    hud.setAmmo(weapons.state.mag.rifle, weapons.state.reserve.rifle, 'AK-47', weapons.state.grenades);
     body.position.copy(ATTACKER_SPAWN);
     settle(20);
     aimAt(new THREE.Vector3(0, 1.5, -6));
@@ -701,7 +701,7 @@ hud.setMoney(match.money);
 hud.setScore(0, 0);
 hud.setAlive(4);
 hud.setTimer(BUY_SECONDS, 'buy');
-hud.setAmmo(weapons.state.mag.pistol, weapons.state.reserve.pistol, 'Sidekick P250', weapons.state.grenades);
+hud.setAmmo(weapons.state.mag.pistol, weapons.state.reserve.pistol, 'P250', weapons.state.grenades);
 // Test hook: live match state for headless verification (read-only snapshot).
 window.__game = {
   get state() {

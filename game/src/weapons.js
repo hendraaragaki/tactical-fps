@@ -5,11 +5,11 @@ import * as THREE from 'three';
 import { PALETTE } from './palette.js';
 
 export const WEAPONS = {
-  pistol: { name: 'Sidekick P250', price: 0, damage: 26, headMult: 3, mag: 12, reserve: 36, gap: 0.16, reload: 1.3, spreadStill: 0.004, spreadMove: 0.03, auto: false, pellets: 1, kick: 0.03 },
-  rifle: { name: 'VK-7 Rifle', price: 2700, damage: 34, headMult: 3, mag: 30, reserve: 90, gap: 0.096, reload: 1.9, spreadStill: 0.0022, spreadMove: 0.028, auto: true, pellets: 1, kick: 0.055 },
-  smg: { name: 'Hornet-9 SMG', price: 1500, damage: 24, headMult: 3, mag: 32, reserve: 96, gap: 0.07, reload: 1.7, spreadStill: 0.004, spreadMove: 0.03, auto: true, pellets: 1, kick: 0.04 },
-  dmr: { name: 'Longbow DMR', price: 4750, damage: 88, headMult: 3, mag: 5, reserve: 15, gap: 0.9, reload: 2.6, spreadStill: 0.0008, spreadMove: 0.02, auto: false, pellets: 1, kick: 0.11 },
-  shotgun: { name: 'Breacher-12', price: 1700, damage: 11, headMult: 2, mag: 6, reserve: 18, gap: 0.85, reload: 2.4, spreadStill: 0.05, spreadMove: 0.07, auto: false, pellets: 8, kick: 0.12 },
+  pistol: { name: 'P250', price: 0, damage: 26, headMult: 3, mag: 12, reserve: 36, gap: 0.16, reload: 1.3, spreadStill: 0.004, spreadMove: 0.03, auto: false, pellets: 1, kick: 0.03 },
+  rifle: { name: 'AK-47', price: 2700, damage: 34, headMult: 3, mag: 30, reserve: 90, gap: 0.096, reload: 1.9, spreadStill: 0.0022, spreadMove: 0.028, auto: true, pellets: 1, kick: 0.055 },
+  smg: { name: 'MP5', price: 1500, damage: 24, headMult: 3, mag: 32, reserve: 96, gap: 0.07, reload: 1.7, spreadStill: 0.004, spreadMove: 0.03, auto: true, pellets: 1, kick: 0.04 },
+  dmr: { name: 'AWP', price: 4750, damage: 88, headMult: 3, mag: 5, reserve: 15, gap: 0.9, reload: 2.6, spreadStill: 0.0008, spreadMove: 0.02, auto: false, pellets: 1, kick: 0.11 },
+  shotgun: { name: 'MAG-7', price: 1700, damage: 11, headMult: 2, mag: 6, reserve: 18, gap: 0.85, reload: 2.4, spreadStill: 0.05, spreadMove: 0.07, auto: false, pellets: 8, kick: 0.12 },
 };
 export const GRENADES = {
   frag: { name: 'Frag', price: 300, radius: 5.5, damage: 95 },
@@ -18,40 +18,79 @@ export const GRENADES = {
 };
 export const SLOTS = ['rifle', 'pistol', 'frag', 'smoke', 'flash'];
 
+// View models: each gun is built from boxes (plus one cylinder for the AWP scope)
+// with dark, high-contrast materials so the gun reads as a silhouette against the
+// bright dusk ground. Wood furniture on the AK-47 and MAG-7, olive on the AWP,
+// gunmetal everywhere else, one ember accent strip per gun. Same group position
+// and scale as before, so framing and gameplay are untouched.
 function buildGun(def, kind) {
-  const grip = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.hairline), roughness: 0.7, metalness: 0.2 });
-  const body = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.ink), roughness: 0.5, metalness: 0.35 });
+  const gunmetal = new THREE.MeshStandardMaterial({ color: 0x2b2b30, roughness: 0.45, metalness: 0.55 });
+  const steel = new THREE.MeshStandardMaterial({ color: 0x56565e, roughness: 0.35, metalness: 0.7 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x1c1a18, roughness: 0.7, metalness: 0.2 });
+  const wood = new THREE.MeshStandardMaterial({ color: 0x96602c, roughness: 0.8, metalness: 0.05 });
+  const olive = new THREE.MeshStandardMaterial({ color: 0x4a5d3a, roughness: 0.6, metalness: 0.2 });
   const accent = new THREE.MeshStandardMaterial({ color: new THREE.Color(PALETTE.accent), roughness: 0.5, metalness: 0.2 });
   const group = new THREE.Group();
-  const add = (w, h, d, x, y, z, mat) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat || body);
+  const add = (w, h, d, x, y, z, mat, rx = 0) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat || gunmetal);
     m.position.set(x, y, z);
+    if (rx) m.rotation.x = rx;
     group.add(m);
     return m;
   };
   if (kind === 'pistol') {
-    add(0.07, 0.09, 0.24, 0, 0, -0.1);
-    add(0.06, 0.12, 0.08, 0, -0.09, 0.02, grip);
+    // P250: compact slide over a dark frame, raked grip.
+    add(0.07, 0.07, 0.24, 0, 0.01, -0.10, gunmetal);
+    add(0.04, 0.04, 0.05, 0, 0.01, -0.24, steel);
+    add(0.065, 0.06, 0.20, 0, -0.035, -0.08, dark);
+    add(0.06, 0.13, 0.08, 0, -0.11, 0.03, dark, -0.25);
+    add(0.012, 0.02, 0.012, 0, 0.055, -0.20, accent);
   } else if (kind === 'smg') {
-    add(0.09, 0.1, 0.34, 0, 0, -0.05);
-    add(0.05, 0.05, 0.2, 0, 0.02, -0.3, grip);
-    add(0.06, 0.14, 0.07, 0, -0.1, 0.06, grip);
-    add(0.09, 0.03, 0.1, 0, 0.06, -0.12, accent);
+    // MP5: short compact body, straight mag, thin stock, front sight post.
+    add(0.08, 0.10, 0.30, 0, 0, -0.05, gunmetal);
+    add(0.035, 0.035, 0.22, 0, 0.02, -0.30, steel);
+    add(0.012, 0.05, 0.012, 0, 0.06, -0.40, gunmetal);
+    add(0.085, 0.07, 0.16, 0, -0.01, -0.20, dark);
+    add(0.05, 0.16, 0.07, 0, -0.12, -0.02, gunmetal, 0.08);
+    add(0.06, 0.08, 0.14, 0, -0.01, 0.22, gunmetal);
+    add(0.055, 0.11, 0.06, 0, -0.095, 0.08, dark, -0.2);
+    add(0.08, 0.015, 0.10, 0, 0.055, -0.05, accent);
   } else if (kind === 'dmr') {
-    add(0.08, 0.09, 0.55, 0, 0, -0.15);
-    add(0.04, 0.04, 0.3, 0, 0.02, -0.5, grip);
-    add(0.07, 0.06, 0.14, 0, 0.07, -0.1, accent);
-    add(0.07, 0.08, 0.2, 0, -0.02, 0.28, grip);
+    // AWP: long olive body, big scope on top, muzzle brake, bolt handle.
+    add(0.08, 0.10, 0.52, 0, 0, -0.12, olive);
+    add(0.035, 0.035, 0.42, 0, 0.02, -0.48, steel);
+    add(0.055, 0.055, 0.08, 0, 0.02, -0.68, dark);
+    const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.24, 12), dark);
+    scope.rotation.x = Math.PI / 2;
+    scope.position.set(0, 0.095, -0.16);
+    group.add(scope);
+    add(0.02, 0.03, 0.03, 0, 0.07, -0.06, gunmetal);
+    add(0.02, 0.03, 0.03, 0, 0.07, -0.26, gunmetal);
+    add(0.06, 0.02, 0.02, 0.06, 0.01, 0.02, steel);
+    add(0.075, 0.09, 0.22, 0, -0.01, 0.30, olive);
+    add(0.06, 0.10, 0.09, 0, -0.09, -0.04, gunmetal);
+    add(0.055, 0.10, 0.06, 0, -0.09, 0.12, dark, -0.2);
   } else if (kind === 'shotgun') {
-    add(0.1, 0.11, 0.42, 0, 0, -0.08);
-    add(0.09, 0.09, 0.3, 0, 0.03, -0.4, grip);
-    add(0.08, 0.07, 0.2, 0, -0.03, 0.24, grip);
-    add(0.1, 0.03, 0.12, 0, 0.07, -0.1, accent);
+    // MAG-7: thick receiver, wide wooden pump, short barrel, bead sight.
+    add(0.10, 0.11, 0.36, 0, 0, -0.06, gunmetal);
+    add(0.05, 0.05, 0.28, 0, 0.03, -0.36, steel);
+    add(0.105, 0.09, 0.20, 0, -0.02, -0.28, wood);
+    add(0.09, 0.10, 0.20, 0, -0.01, 0.26, wood);
+    add(0.06, 0.11, 0.07, 0, -0.10, 0.10, dark, -0.2);
+    add(0.012, 0.02, 0.012, 0, 0.065, -0.48, accent);
   } else {
-    add(0.09, 0.1, 0.42, 0, 0, -0.08);
-    add(0.045, 0.045, 0.4, 0, 0.025, -0.46, grip);
-    add(0.075, 0.08, 0.22, 0, -0.02, 0.3, grip);
-    add(0.09, 0.03, 0.12, 0, 0.06, -0.14, accent);
+    // AK-47: dark receiver, wooden handguard and stock, curved magazine.
+    add(0.09, 0.11, 0.40, 0, 0, -0.08, gunmetal);
+    add(0.04, 0.04, 0.32, 0, 0.025, -0.44, steel);
+    add(0.015, 0.06, 0.015, 0, 0.06, -0.58, gunmetal);
+    add(0.05, 0.05, 0.05, 0, 0.025, -0.60, dark);
+    add(0.09, 0.075, 0.20, 0, -0.005, -0.30, wood);
+    add(0.085, 0.10, 0.22, 0, -0.015, 0.28, wood);
+    add(0.06, 0.12, 0.09, 0, -0.10, -0.06, gunmetal, 0.12);
+    add(0.06, 0.12, 0.09, 0, -0.19, -0.02, gunmetal, 0.32);
+    add(0.065, 0.05, 0.095, 0, -0.255, 0.03, dark, 0.5);
+    add(0.06, 0.12, 0.07, 0, -0.10, 0.12, wood, -0.25);
+    add(0.09, 0.015, 0.12, 0, 0.06, -0.10, accent);
   }
   group.position.set(0.24, -0.2, -0.42);
   return group;
